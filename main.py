@@ -15,9 +15,9 @@ class FilterPr(BaseFilter):
 
 def pr(bot, update):
     if random.randint(1, 100) <= config.react_rate:
-        update.message.reply_text(random.choice(config.default_emoticon))
+        update.message.reply_text(random.choice(config.react_emoticons))
     else:
-        update.message.reply_text(config.react_emoticons)
+        update.message.reply_text(config.default_emoticon)
 
 
 def debug(bot, update):
