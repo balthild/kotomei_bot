@@ -7,10 +7,10 @@ import config
 
 class FilterPr(BaseFilter):
     def __init__(self):
-        self.regex = re.compile(r'/(pr)+(@kotomei(_bot)?)?')
+        self.regex = re.compile(r'/(pr)+(@kotomei(_bot)?)?( |$)')
 
     def filter(self, message):
-        return bool(message.text and self.regex.match(message.text) is not None)
+        return bool(message.text and self.regex.search(message.text) is not None)
 
 
 def pr(bot, update):
