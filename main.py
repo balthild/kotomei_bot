@@ -13,14 +13,11 @@ class FilterPr(BaseFilter):
         return bool(message.text and self.regex.match(message.text) is not None)
 
 
-emoticons = ['⁄(⁄ ⁄•⁄ω⁄•⁄ ⁄)⁄', '(≧ ﹏ ≦)', '(*/ω＼*)', 'ヽ(*。>Д<)o゜', '(つ ﹏ ⊂)']
-
-
 def pr(bot, update):
-    if random.randint(1, 100) > 95:
-        update.message.reply_text(random.choice(emoticons))
+    if random.randint(1, 100) <= config.react_rate:
+        update.message.reply_text(random.choice(config.default_emoticon))
     else:
-        update.message.reply_text('( >  < )')
+        update.message.reply_text(config.react_emoticons)
 
 
 def debug(bot, update):
@@ -30,7 +27,7 @@ def debug(bot, update):
 def main():
     # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-    updater = Updater(config.TOKEN)
+    updater = Updater(config.token)
 
     updater.dispatcher.add_handler(MessageHandler(FilterPr(), pr))
     # updater.dispatcher.add_handler(MessageHandler(Filters.all, debug))
