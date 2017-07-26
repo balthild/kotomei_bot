@@ -1,7 +1,8 @@
 import re
 import random
 from telegram.ext import Updater, MessageHandler, BaseFilter, Filters
-from . import config
+
+import config
 
 
 class FilterPr(BaseFilter):
@@ -12,7 +13,7 @@ class FilterPr(BaseFilter):
         return bool(message.text and self.regex.match(message.text) is not None)
 
 
-emoticons = ['⁄(⁄ ⁄•⁄ω⁄•⁄ ⁄)⁄', 'ヾ(*´∀ ˋ*)ﾉ', '(≧ ﹏ ≦)']
+emoticons = ['⁄(⁄ ⁄•⁄ω⁄•⁄ ⁄)⁄', '(≧ ﹏ ≦)', '(*/ω＼*)', 'ヽ(*。>Д<)o゜', '(つ ﹏ ⊂)']
 
 
 def pr(bot, update):
