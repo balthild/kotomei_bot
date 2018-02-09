@@ -22,10 +22,17 @@ class FilterPrOther(BaseFilter):
 
 
 def pr(bot, update):
+    text = ''
+
+    if update.message.from_user.username in config.prpr_back:
+        text += '/prpr@' + update.message.from_user.username + ' '
+
     if random.randint(1, 100) <= config.react_rate:
-        update.message.reply_text(random.choice(config.react_emoticons))
+        text += random.choice(config.react_emoticons)
     else:
-        update.message.reply_text(config.default_emoticon)
+        text += config.default_emoticon
+
+    update.message.reply_text(text)
 
 
 def pr_other(bot, update):
