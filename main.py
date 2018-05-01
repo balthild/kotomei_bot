@@ -24,7 +24,7 @@ class FilterPrOther(BaseFilter):
 def pr(bot, update):
     text = ''
 
-    if update.message.from_user.username in config.prpr_back:
+    if update.message.from_user.username.lower() in config.prpr_back:
         text += '/prpr@' + update.message.from_user.username + ' '
 
     if random.randint(1, 100) <= config.react_rate:
@@ -45,6 +45,8 @@ def debug(bot, update):
 
 def main():
     # logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+    config.prpr_back = [name.lower() for name in config.prpr_back]
 
     updater = Updater(config.token)
 
