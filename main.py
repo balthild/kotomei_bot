@@ -24,7 +24,8 @@ class FilterPrOther(BaseFilter):
 def pr(bot, update):
     text = ''
 
-    if update.message.from_user.username.lower() in config.prpr_back:
+    name = update.message.from_user.username
+    if name is not None and name.lower() in config.prpr_back:
         text += '/prpr@' + update.message.from_user.username + ' '
 
     if random.randint(1, 100) <= config.react_rate:
