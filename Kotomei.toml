@@ -1,0 +1,6 @@
+token = '00000000:XXXXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXX'
+react_rate = 5
+react_emoticons = ["⁄(⁄ ⁄•⁄ω⁄•⁄ ⁄)⁄", "(≧ ﹏ ≦)", "(*/ω＼*)", "ヽ(*。>Д<)o゜", "(つ ﹏ ⊂)"]
+other_emoticon = "| ω・`)"
+default_emoticon = "( >  < )"
+prpr_back = ["kotomei", "RikkaW", "WordlessEcho", "Yeatce", "Duang", "hyx01", "fython", "Cn47mP", "Aeciane", "rikakomoe"]
