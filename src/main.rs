@@ -4,7 +4,6 @@ use std::fs::File;
 use std::io::Read;
 use std::sync::Arc;
 use teloxide::prelude::*;
-use tokio::sync::Mutex;
 
 #[derive(Deserialize)]
 struct Config {
@@ -19,14 +18,12 @@ struct Config {
 struct Kotomei {
     bot: Arc<Bot>,
     config: Config,
-    rng: Mutex<SmallRng>,
 }
 
 impl Kotomei {
     fn new(config: Config) -> Arc<Self> {
         let bot = Bot::new(&config.token);
-        let rng = Mutex::new(SmallRng::from_entropy());
-        let kotomei = Self { bot, config, rng };
+        let kotomei = Self { bot, config };
         Arc::new(kotomei)
     }
 
@@ -46,22 +43,18 @@ impl Kotomei {
     }
 
     async fn handle_text(&self, ctx: DispatcherHandlerCx<Message>, text: String) {
-        let target = match self.get_command(&text) {
-            Some(("/prpr", target)) => target,
-            _ => return,
-        };
-
-        match target {
-            "kotomei" | "kotomei_bot" => self.handle_prpr(ctx).await,
-            _ => self.handle_prpr_other(ctx).await,
+        match self.get_prpr_target(&text) {
+            Some("kotomei") | Some("kotomei_bot") => self.handle_prpr(ctx).await,
+            Some(_) => self.handle_prpr_other(ctx).await,
+            _ => {}
         }
     }
 
     async fn handle_prpr(&self, ctx: DispatcherHandlerCx<Message>) {
         let emoticon = {
-            let mut rng = self.rng.lock().await;
+            let mut rng = thread_rng();
             if rng.gen_ratio(self.config.react_rate, 100) {
-                self.config.react_emoticons.choose(&mut *rng).unwrap()
+                self.config.react_emoticons.choose(&mut rng).unwrap()
             } else {
                 &self.config.default_emoticon
             }
@@ -69,9 +62,9 @@ impl Kotomei {
 
         let reply = match self.get_username(&ctx.update) {
             Some(name) if self.config.prpr_back.contains(&name.to_ascii_lowercase()) => {
-                format!("{} /prpr@{}", emoticon, name)
+                format!("/prpr@{} {}", name, emoticon)
             }
-            _ => emoticon.to_owned(),
+            _ => emoticon.to_string(),
         };
 
         ctx.reply_to(reply).send().await.log_on_error().await;
@@ -82,14 +75,17 @@ impl Kotomei {
         ctx.reply_to(reply).send().await.log_on_error().await;
     }
 
-    fn get_command<'a>(&self, text: &'a str) -> Option<(&'a str, &'a str)> {
+    fn get_prpr_target<'a>(&self, text: &'a str) -> Option<&'a str> {
         let mut words = text.split_whitespace();
         let mut pieces = words.next()?.split('@');
 
-        let command = pieces.next()?;
-        let target = pieces.next().unwrap_or("kotomei");
+        let command = pieces.next();
+        let target = pieces.next();
 
-        Some((command, target))
+        match command {
+            Some("/prpr") => target.or(Some("kotomei_bot")),
+            _ => None,
+        }
     }
 
     fn get_username<'a>(&self, message: &'a Message) -> Option<&'a str> {
